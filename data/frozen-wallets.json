@@ -1,0 +1,117 @@
+{
+  "network": "Chain 1404 community history",
+  "rpc_used": "https://rpc.capedag.com",
+  "chain_id": 1404,
+  "full_blocklist": "0xe628505d5cB6F5F4f9a25Cd5c80Caa198cc645a0",
+  "isBlocked_selector": "0xe5962195",
+  "blocklist_owner": "0xe9ce34eda6a4554420ca871d7057edaec32e9e9c",
+  "note_26aug_figure_bdag": "26972000000",
+  "snapshot": {
+    "kind": "latest_head",
+    "approx_height": 19651454,
+    "why_not_18955000": "Public community RPCs return missing-trie for historical eth_getBalance at 18955000. Live isBlocked() + latest balances on this same address set sum to 26.971692571 BDAG, matching the 26 Aug ~26.972B figure."
+  },
+  "method": "eth_getLogs on the full-blocklist contract from genesis to head (23 events), then eth_call isBlocked(address) and eth_getBalance(address, latest) for every address that ever appeared in those logs.",
+  "fully_blocked_now": [
+    {
+      "address": "0x558999486d976ec2ddc18da9a97c7ccb78d9bd18",
+      "label": "Buyback wallet (named in 24 Aug report)",
+      "blocked": true,
+      "balance_bdag": "11910611832.57500839"
+    },
+    {
+      "address": "0xF417719986a694a71C3Ac3095c103802846c3fF4",
+      "label": "Genesis consolidation \u2014 staking-rewards bucket (25B)",
+      "blocked": true,
+      "balance_bdag": "7560011772.61413002"
+    },
+    {
+      "address": "0xb685760ebd368a891f27ae547391f4e2a289895b",
+      "label": "Blocked allocation wallet",
+      "blocked": true,
+      "balance_bdag": "1763890486.89364290"
+    },
+    {
+      "address": "0xf1c4393fc08a965034063d637e3c965048a0e5f2",
+      "label": "Blocked allocation wallet",
+      "blocked": true,
+      "balance_bdag": "1732143721.59189582"
+    },
+    {
+      "address": "0x35E7f8f1031B2Bf364A88fdE7FDDA80FCe8C3bBe",
+      "label": "Genesis consolidation \u2014 team bucket (1.5B)",
+      "blocked": true,
+      "balance_bdag": "1500020926.19769001"
+    },
+    {
+      "address": "0x1b277f2edfc4fdf732e4d683f7c12c832a6bcb89",
+      "label": "Blocked allocation wallet",
+      "blocked": true,
+      "balance_bdag": "1000000000.00000000"
+    },
+    {
+      "address": "0x68f4cf37ce5be16b3076761020f42685a544e2e9",
+      "label": "Blocked allocation wallet",
+      "blocked": true,
+      "balance_bdag": "999999003.99769008"
+    },
+    {
+      "address": "0x04dCF6A45e169020eD4Ae78A3B627c5AADa35355",
+      "label": "Vesting contract 3 (public BlockDAG allocation page)",
+      "blocked": true,
+      "balance_bdag": "407361351.19999999"
+    },
+    {
+      "address": "0xc0ac84130313a5dd78097c62516a9d1f9f47b204",
+      "label": "Blocked allocation wallet",
+      "blocked": true,
+      "balance_bdag": "66861452.32468735"
+    },
+    {
+      "address": "0x4938DF5b0eaF8130CA128e480812c2cc5c70b6c4",
+      "label": "Genesis consolidation \u2014 liquidity bucket (4.5B)",
+      "blocked": true,
+      "balance_bdag": "27243326.76117756"
+    },
+    {
+      "address": "0xd8A5D6Df7F3A1d57CDC9661f4a8132E9206B00D5",
+      "label": "Genesis consolidation \u2014 special/presale-scale bucket (50B)",
+      "blocked": true,
+      "balance_bdag": "3430346.57266954"
+    },
+    {
+      "address": "0x14143445822f03796A7301B0cE5b437d3070474D",
+      "label": "Genesis consolidation \u2014 treasury bucket (19B)",
+      "blocked": true,
+      "balance_bdag": "118350.99789620"
+    },
+    {
+      "address": "0x74c0e51805674c4b482f749ebdedf78c816458ec",
+      "label": "Blocked (zero balance)",
+      "blocked": true,
+      "balance_bdag": "0"
+    }
+  ],
+  "sum_fully_blocked_bdag": "26971692571.72649",
+  "appeared_in_logs_but_not_fully_blocked_now": [
+    {
+      "address": "0x86790abbaccd1b21f5ecfdaa67ec6282afbf3e83",
+      "note": "Added then removed (two later unblock events). isBlocked=false. Balance still ~2.928B.",
+      "blocked": false,
+      "balance_bdag": "2928285793.07189178"
+    },
+    {
+      "address": "0xed5e2dd1377abe28907673cdea8c2c04fb715dcd",
+      "note": "Showed up in an ownership-related event, not a freeze. isBlocked=false.",
+      "blocked": false,
+      "balance_bdag": "4986044.34736782"
+    },
+    {
+      "address": "0xe9ce34eda6a4554420ca871d7057edaec32e9e9c",
+      "note": "Current blocklist owner EOA. Not frozen.",
+      "blocked": false,
+      "balance_bdag": "99.99467800"
+    }
+  ],
+  "app": "Web365 27B Blocklist Check"
+}

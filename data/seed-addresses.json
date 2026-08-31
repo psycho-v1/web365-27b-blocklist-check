@@ -1,0 +1,26 @@
+{
+  "note": "Addresses named in the 24 Aug 2026 community report and 26 Aug technical note. This is a starting set, not the complete ~27B frozen list. The live page checks the full-blocklist contract and sums balances.",
+  "checkpoint_block_26aug": 18955000,
+  "contracts": {
+    "fullBlocklist": "0xe628505d5cB6F5F4f9a25Cd5c80Caa198cc645a0",
+    "selectiveBlocklist": "0xc0a42A43A05e39C3a4165CA98440D516959f41D9",
+    "blocklistOwnerAt24Aug": "0xe9ce34ed…32e9e9c"
+  },
+  "genesis_sources": [
+    { "address": "0x02e5af0Ad6BE6b4cDAf128A95151Ba085FAD57A5", "label": "Genesis 50B", "genesis_bdag": "50000000000" },
+    { "address": "0x3E0BbB1F74F0c6a1ACBd94852E6eD56B3188945a", "label": "Genesis 25B", "genesis_bdag": "25000000000" },
+    { "address": "0xd3C71d04c47c09Aca9b09d352d03fDA55476BBB5", "label": "Genesis 19B", "genesis_bdag": "19000000000" },
+    { "address": "0xD347B37006c7452A7a9560301c65F7b66C17394d", "label": "Genesis 4.5B", "genesis_bdag": "4500000000" },
+    { "address": "0xb8668d04a4ed27104c03702C4dFa7E9d1cfcbf49", "label": "Genesis 1.5B", "genesis_bdag": "1500000000" }
+  ],
+  "consolidation_destinations": [
+    { "address": "0xd8A5D6Df7F3A1d57CDC9661f4a8132E9206B00D5", "label": "Consolidation from 50B / Special" },
+    { "address": "0xF417719986a694a71C3Ac3095c103802846c3fF4", "label": "Consolidation from 25B / Staking rewards" },
+    { "address": "0x14143445822f03796A7301B0cE5b437d3070474D", "label": "Consolidation from 19B / Treasury" },
+    { "address": "0x4938DF5b0eaF8130CA128e480812c2cc5c70b6c4", "label": "Consolidation from 4.5B / Liquidity" },
+    { "address": "0x35E7f8f1031B2Bf364A88fdE7FDDA80FCe8C3bBe", "label": "Consolidation from 1.5B / Team" }
+  ],
+  "named_fully_blocked": [
+    { "address": "0x558999486d976ec2ddc18da9a97c7ccb78d9bd18", "label": "Buyback wallet — named fully blocked on both histories" }
+  ]
+}
