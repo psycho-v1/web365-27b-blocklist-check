@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web365 27B Blocklist Check</title>
+  <meta name="description" content="Web365 27B Blocklist Check — community Chain 1404 frozen wallets behind the ~26.972B BDAG figure." />
+  <style>
+    :root {
+      --bg:#080a10; --card:#131722; --line:#2a3144; --text:#eef1f8;
+      --muted:#9aa3b8; --accent:#8b7cff; --good:#3dd68c; --warn:#f5c542;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background:
+        radial-gradient(900px 420px at 0% -10%, #24185a 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 28px 16px 80px; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -0.03em; }
+    .sub { color: var(--muted); max-width: 80ch; line-height: 1.5; }
+    .hero { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; margin: 20px 0 14px; }
+    .card { background: var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+    .k { color: var(--muted); font-size:11px; text-transform: uppercase; letter-spacing: .04em; }
+    .v { font-size:1.18rem; font-weight:750; margin-top:4px; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; margin: 0 0 14px; }
+    button, select {
+      font: inherit; border-radius: 999px; padding: 9px 14px; cursor: pointer;
+    }
+    button {
+      background: var(--accent); color:#0b0d14; border:0; font-weight:700;
+    }
+    button.ghost { background: transparent; color: var(--text); border:1px solid var(--line); }
+    select {
+      background:#0e1220; color: var(--text); border:1px solid var(--line);
+    }
+    table { width:100%; border-collapse: collapse; font-size:13px; }
+    th, td { text-align:left; padding:9px 6px; border-bottom:1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight:600; }
+    .addr { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+    .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .copy { border:0; background: transparent; color: var(--muted); padding: 0 0 0 8px; cursor:pointer; font-size:12px; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+    .on { background:#2a1630; color:#ff9aa6; }
+    .off { background:#10261c; color: var(--good); }
+    .status { color: var(--muted); font-size:12px; min-height: 1.4em; }
+    footer { color: var(--muted); font-size:12px; margin-top:18px; line-height:1.5; }
+    a { color:#b7adff; }
+    @media (max-width:800px){ .hero { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Web365 27B Blocklist Check</h1>
+  <p class="sub">
+    The community full-blocklist set that makes up the 26 Aug 2026
+    <b>~26.972 billion BDAG</b> figure. Source of truth is contract
+    <span class="addr">0xe628505d5cB6F5F4f9a25Cd5c80Caa198cc645a0</span>.
+  </p>
+
+  <div class="hero">
+    <div class="card"><div class="k">Blocked wallets</div><div class="v" id="nBlocked">13</div></div>
+    <div class="card"><div class="k">Frozen sum</div><div class="v" id="sumFrozen">26.9717B</div></div>
+    <div class="card"><div class="k">Published figure</div><div class="v">~26.972B</div></div>
+    <div class="card"><div class="k">Data</div><div class="v" id="dataKind">Snapshot</div></div>
+  </div>
+
+  <div class="row">
+    <select id="rpc">
+      <option value="https://rpc.capedag.com">rpc.capedag.com</option>
+      <option value="https://rpc.welshdag.trade">rpc.welshdag.trade</option>
+      <option value="https://rpc.dvdmining.com">rpc.dvdmining.com</option>
+      <option value="https://rpc.east.bdag-us.org">rpc.east.bdag-us.org</option>
+    </select>
+    <button id="refresh">Refresh live</button>
+    <button class="ghost" id="csv">Download CSV</button>
+    <a class="ghost" href="data/frozen-wallets.json" style="display:inline-flex;align-items:center;padding:9px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--text)">JSON</a>
+  </div>
+  <div class="status" id="status">Showing verified snapshot. Refresh live to re-read the contract.</div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Address</th>
+          <th>Label</th>
+          <th>Blocked</th>
+          <th>Balance (BDAG)</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    Built from <code>eth_getLogs</code> on the full-blocklist contract (23 events) plus
+    <code>isBlocked(address)</code> selector <code>0xe5962195</code> and
+    <code>eth_getBalance</code> on community RPC. Public nodes do not keep state at block 18,955,000;
+    the live blocked set sums to the published figure. Freeze immobilises funds on enforcing nodes. It does not seize keys.
+  </footer>
+</main>
+<script>
+const CONTRACT = "0xe628505d5cB6F5F4f9a25Cd5c80Caa198cc645a0";
+const IS_BLOCKED = "0xe5962195";
+
+const SNAPSHOT = [
+  ["0x558999486d976ec2ddc18da9a97c7ccb78d9bd18", "Buyback wallet", "11910611832.57500839"],
+  ["0xF417719986a694a71C3Ac3095c103802846c3fF4", "Consolidation — staking-rewards bucket", "7560011772.61413002"],
+  ["0xb685760ebd368a891f27ae547391f4e2a289895b", "Blocked allocation", "1763890486.89364290"],
+  ["0xf1c4393fc08a965034063d637e3c965048a0e5f2", "Blocked allocation", "1732143721.59189582"],
+  ["0x35E7f8f1031B2Bf364A88fdE7FDDA80FCe8C3bBe", "Consolidation — team bucket", "1500020926.19769001"],
+  ["0x1b277f2edfc4fdf732e4d683f7c12c832a6bcb89", "Blocked allocation", "1000000000.00000000"],
+  ["0x68f4cf37ce5be16b3076761020f42685a544e2e9", "Blocked allocation", "999999003.99769008"],
+  ["0x04dCF6A45e169020eD4Ae78A3B627c5AADa35355", "Vesting contract 3", "407361351.19999999"],
+  ["0xc0ac84130313a5dd78097c62516a9d1f9f47b204", "Blocked allocation", "66861452.32468735"],
+  ["0x4938DF5b0eaF8130CA128e480812c2cc5c70b6c4", "Consolidation — liquidity bucket", "27243326.76117756"],
+  ["0xd8A5D6Df7F3A1d57CDC9661f4a8132E9206B00D5", "Consolidation — special / 50B bucket", "3430346.57266954"],
+  ["0x14143445822f03796A7301B0cE5b437d3070474D", "Consolidation — treasury bucket", "118350.99789620"],
+  ["0x74c0e51805674c4b482f749ebdedf78c816458ec", "Blocked, empty", "0"]
+];
+
+let rows = SNAPSHOT.map(([address, label, balance]) => ({
+  address, label, blocked: true, balance
+}));
+
+function fmt(n) {
+  const x = Number(n);
+  return x.toLocaleString("en-US", { maximumFractionDigits: 6 });
+}
+function shortB(n) {
+  const x = Number(n);
+  if (x >= 1e9) return (x / 1e9).toFixed(4) + "B";
+  if (x >= 1e6) return (x / 1e6).toFixed(2) + "M";
+  return fmt(x);
+}
+function weiToBdag(hex) {
+  const wei = BigInt(hex || "0x0");
+  const whole = wei / 10n ** 18n;
+  const frac = (wei % 10n ** 18n).toString().padStart(18, "0").replace(/0+$/, "");
+  return frac ? whole.toString() + "." + frac.slice(0, 8) : whole.toString();
+}
+
+function render(kind) {
+  const frozen = rows.filter(r => r.blocked);
+  const sum = frozen.reduce((a, r) => a + Number(r.balance), 0);
+  document.getElementById("nBlocked").textContent = String(frozen.length);
+  document.getElementById("sumFrozen").textContent = shortB(sum);
+  document.getElementById("dataKind").textContent = kind;
+  document.getElementById("rows").innerHTML = rows.map((r, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td class="addr">${r.address}<button class="copy" data-addr="${r.address}">copy</button></td>
+      <td>${r.label}</td>
+      <td><span class="pill ${r.blocked ? "on" : "off"}">${r.blocked ? "yes" : "no"}</span></td>
+      <td class="num">${fmt(r.balance)}</td>
+    </tr>`).join("");
+}
+
+async function rpc(method, params) {
+  const url = document.getElementById("rpc").value;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
+  });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error.message || "RPC error");
+  return json.result;
+}
+
+async function refresh() {
+  const status = document.getElementById("status");
+  const btn = document.getElementById("refresh");
+  btn.disabled = true;
+  status.textContent = "Reading community RPC…";
+  try {
+    const height = Number(BigInt(await rpc("eth_blockNumber", [])));
+    const next = [];
+    for (const r of rows) {
+      const data = IS_BLOCKED + r.address.slice(2).toLowerCase().padStart(64, "0");
+      const flag = await rpc("eth_call", [{ to: CONTRACT, data }, "latest"]);
+      const bal = await rpc("eth_getBalance", [r.address, "latest"]);
+      next.push({
+        ...r,
+        blocked: BigInt(flag || "0x0") > 0n,
+        balance: weiToBdag(bal)
+      });
+    }
+    rows = next.sort((a, b) => Number(b.balance) - Number(a.balance));
+    render("Live #" + height.toLocaleString());
+    status.textContent = "Live from " + document.getElementById("rpc").value + " at block " + height.toLocaleString() + ".";
+  } catch (e) {
+    status.textContent = "Live RPC failed (" + e.message + "). Snapshot left in place. Many public RPCs block browser CORS.";
+  }
+  btn.disabled = false;
+}
+
+document.getElementById("rows").addEventListener("click", (e) => {
+  const addr = e.target.getAttribute("data-addr");
+  if (!addr) return;
+  navigator.clipboard.writeText(addr);
+  e.target.textContent = "copied";
+  setTimeout(() => { e.target.textContent = "copy"; }, 900);
+});
+document.getElementById("refresh").onclick = refresh;
+document.getElementById("csv").onclick = () => {
+  const lines = ["address,label,blocked,balance_bdag"].concat(
+    rows.map(r => [r.address, JSON.stringify(r.label), r.blocked, r.balance].join(","))
+  );
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
+  a.download = "web365-27b-blocklist-check.csv";
+  a.click();
+};
+
+render("Snapshot");
+</script>
+</body>
+</html>
