@@ -12,23 +12,6 @@ The page ships with a verified snapshot. If a community RPC allows browser calls
 - JSON at `data/frozen-wallets.json`
 - CSV export
 
-## Publish
-
-```bash
-git init
-git add .
-git commit -m "Web365 27B Blocklist Check"
-git branch -M main
-git remote add origin git@github.com:<you>/web365-27b-blocklist-check.git
-git push -u origin main
-```
-
-Then: repo **Settings → Pages → Deploy from branch → main / root**.
-
-URL: `https://<you>.github.io/web365-27b-blocklist-check/`
-
-No build. No Node. No backend.
-
 ## On-chain source
 
 | Item | Value |
